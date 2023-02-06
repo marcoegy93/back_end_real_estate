@@ -9,8 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddTransient<ILogementService, LogementService>();
 builder.Services.AddTransient<IPersonneService, PersonneService>();
+builder.Services.AddTransient<ILogementService, LogementService>();
 
 builder.Services.AddSwaggerGen();
 

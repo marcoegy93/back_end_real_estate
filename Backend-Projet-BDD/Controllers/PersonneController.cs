@@ -1,4 +1,6 @@
-﻿using Backend_Projet_BDD.Service;
+﻿using Backend_Projet_BDD.IService;
+using Backend_Projet_BDD.Modele;
+using Backend_Projet_BDD.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 
@@ -9,17 +11,17 @@ namespace Backend_Projet_BDD.Controllers
     public class PersonneController : ControllerBase
     {
 
-       PersonneService _personneService;
+       IPersonneService _personneService;
 
-        public PersonneController(PersonneService personneService)
+        public PersonneController(IPersonneService personneService)
         {
             this._personneService = personneService;
         }
 
         [HttpGet("getAllPersonne")]
-        public string getAllLogement()
+        public List<Personne> getAllLogement()
         {
-            return "ok";
+            return this._personneService.getAllPersonne();
         }
 
     }

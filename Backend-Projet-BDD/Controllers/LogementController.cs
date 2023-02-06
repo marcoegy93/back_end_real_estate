@@ -1,4 +1,5 @@
 ﻿using Backend_Projet_BDD.IService;
+using Backend_Projet_BDD.Modele;
 using Backend_Projet_BDD.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace Backend_Projet_BDD.Controllers
         }
 
         [HttpGet("getAllLogement")]
-        public string getAllLogement()
+        public List<Logement> getAllLogement()
         {
             return this._logementService.getAllLogement();
         }
