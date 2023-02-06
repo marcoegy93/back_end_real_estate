@@ -19,9 +19,15 @@ namespace Backend_Projet_BDD.Controllers
         }
 
         [HttpGet("getAllPersonne")]
-        public List<Personne> getAllLogement()
+        public List<Personne> getAllPersonne()
         {
             return this._personneService.getAllPersonne();
+        }
+
+        [HttpGet("getPersonneByName/{name}")]
+        public List<Personne> getPersonneByName(String name)
+        {
+            return this._personneService.getPersoneByName(name);
         }
 
     }

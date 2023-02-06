@@ -30,5 +30,25 @@ namespace Backend_Projet_BDD.Service
             }
             return listLogement;
         }
+
+        public List<Personne> getPersoneByName(string name)
+        {
+            String query = "select * from personne where nom like '%"+name+"%'";
+            SqlCommand cmd = new SqlCommand(query, _con);
+            SqlDataReader reader = cmd.ExecuteReader();
+            List<Personne> listLogement = new List<Personne>();
+            while (reader.Read())
+            {
+                listLogement.Add(new Personne(
+                    Convert.ToInt32(reader.GetValue(0)),
+                    reader.GetValue(1).ToString(),
+                    reader.GetValue(2).ToString()
+                    ));
+            }
+            return listLogement;
+        }
+
     }
+
+
 }
