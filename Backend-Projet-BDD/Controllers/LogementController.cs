@@ -21,7 +21,19 @@ namespace Backend_Projet_BDD.Controllers
         {
             return this._logementService.getAllLogement();
         }
-      
+
+        [HttpGet("getLogementByWord/{word}")]
+        public List<Logement> getLogementByWord(String word)
+        {
+            return this._logementService.getLogementByWord(word);
+        }
+
+        [HttpPost("getLogementByCriteria")]
+        public List<Logement> getLogementByCriteria(Criteria listcriteria)
+        {
+            return this._logementService.getLogementByCriteria(listcriteria);
+        }
+
 
     }
 }

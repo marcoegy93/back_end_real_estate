@@ -9,7 +9,8 @@ namespace Backend_Projet_BDD.Service
         SqlConnection _con;
         public PersonneService()
         {
-            String strConnexion = "Data Source =DESKTOP-103GNA6\\SQLEXPRESS;Initial Catalog= master; Integrated Security = true";
+            //String strConnexion = "Data Source =DESKTOP-103GNA6\\SQLEXPRESS;Initial Catalog= master; Integrated Security = true"; Abdel DATABASE
+            String strConnexion = "Data Source =DESKTOP-H4NG18I\\SQLEXPRESS;Initial Catalog= Immobilier; Integrated Security = true";
             _con = new SqlConnection(strConnexion);
             _con.Open();
         }
@@ -36,16 +37,16 @@ namespace Backend_Projet_BDD.Service
             String query = "select * from personne where nom like '%"+name+"%'";
             SqlCommand cmd = new SqlCommand(query, _con);
             SqlDataReader reader = cmd.ExecuteReader();
-            List<Personne> listLogement = new List<Personne>();
+            List<Personne> listPersonne= new List<Personne>();
             while (reader.Read())
             {
-                listLogement.Add(new Personne(
+                listPersonne.Add(new Personne(
                     Convert.ToInt32(reader.GetValue(0)),
                     reader.GetValue(1).ToString(),
                     reader.GetValue(2).ToString()
                     ));
             }
-            return listLogement;
+            return listPersonne;
         }
 
     }
