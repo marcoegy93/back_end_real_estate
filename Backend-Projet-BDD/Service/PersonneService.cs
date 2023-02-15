@@ -1,42 +1,47 @@
 ﻿using Backend_Projet_BDD.IService;
 using Backend_Projet_BDD.Modele;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 namespace Backend_Projet_BDD.Service
 {
     public class PersonneService: IPersonneService
     {
-        SqlConnection _con;
+        MySqlConnection _con;
         public PersonneService()
         {
-            //String strConnexion = "Data Source =DESKTOP-103GNA6\\SQLEXPRESS;Initial Catalog= master; Integrated Security = true"; Abdel DATABASE
-            String strConnexion = "Data Source =DESKTOP-H4NG18I\\SQLEXPRESS;Initial Catalog= Immobilier; Integrated Security = true";
-            _con = new SqlConnection(strConnexion);
+            String host = "localhost";
+            String database = "bdd_project";
+            String port = "3306";
+            String username = "root";
+            String password = "";
+            String strConnexion = "Server=" + host + ";Database=" + database
+                + ";port=" + port + ";User Id=" + username + ";password=" + password;
+            _con = new MySqlConnection(strConnexion);
             _con.Open();
         }
 
         public List<Personne> getAllPersonne()
         {
-            String query = " select * from personne";
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataReader reader = cmd.ExecuteReader();
-            List<Personne> listLogement = new List<Personne>();
+            String query = " select * from Personne";
+            MySqlCommand cmd = new MySqlCommand(query, _con);
+            MySqlDataReader reader = cmd.ExecuteReader();
+            List<Personne> listPersonne = new List<Personne>();
             while (reader.Read())
             {
-                listLogement.Add(new Personne(
+                listPersonne.Add(new Personne(
                     Convert.ToInt32(reader.GetValue(0)),
                     reader.GetValue(1).ToString(),
                     reader.GetValue(2).ToString()
                     ));
             }
-            return listLogement;
+            return listPersonne;
         }
 
         public List<Personne> getPersoneByName(string name)
         {
-            String query = "select * from personne where nom like '%"+name+"%'";
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataReader reader = cmd.ExecuteReader();
+            String query = "select * from Personne where nom like '%"+name+"%'";
+            MySqlCommand cmd = new MySqlCommand(query, _con);
+            MySqlDataReader reader = cmd.ExecuteReader();
             List<Personne> listPersonne= new List<Personne>();
             while (reader.Read())
             {
