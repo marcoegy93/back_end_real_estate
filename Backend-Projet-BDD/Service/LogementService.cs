@@ -1,26 +1,30 @@
 ﻿using Backend_Projet_BDD.IService;
 using Backend_Projet_BDD.Modele;
-using Microsoft.Extensions.Hosting;
-using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 namespace Backend_Projet_BDD.Service
 {
     public class LogementService: ILogementService
     {
-        SqlConnection _con;
+        MySqlConnection _con;
         public LogementService()
         {
-            //String strConnexion = "Data Source =DESKTOP-103GNA6\\SQLEXPRESS;Initial Catalog= master; Integrated Security = true"; Abdel DATABASE
-            String strConnexion = "Data Source =DESKTOP-H4NG18I\\SQLEXPRESS;Initial Catalog= Immobilier; Integrated Security = true";
-            _con = new SqlConnection(strConnexion);
+            String host = "localhost";
+            String database = "bdd_project";
+            String port = "3306";
+            String username = "root";
+            String password = "";
+            String strConnexion = "Server=" + host + ";Database=" + database
+                + ";port=" + port + ";User Id=" + username + ";password=" + password;
+            _con = new MySqlConnection(strConnexion);
             _con.Open();
         }
 
         public List<Logement> getAllLogement()
         {
-              String query = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,isnull((select top 1 (c.commissionBase + CAST(c.pourcentage as FLOAT)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc),0) as 'commission', max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement group by l.id_Logement,l.adresse,l.type,l.nbPiece,l.surface,l.etat,l.objetGestion,l.prix,l.dateDispo,l.ville,l.id_Proprietaire, p.nom;";
-              SqlCommand cmd = new SqlCommand(query,_con);
-              SqlDataReader reader = cmd.ExecuteReader();
+              String query = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,ifnull((select (c.commissionBase + CAST(c.pourcentage as DECIMAL)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc LIMIT 1),0) as commission, max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement group by l.id_Logement,l.adresse,l.type,l.nbPiece,l.surface,l.etat,l.objetGestion,l.prix,l.dateDispo,l.ville,l.id_Proprietaire, p.nom;";
+              MySqlCommand cmd = new MySqlCommand(query,_con);
+              MySqlDataReader reader = cmd.ExecuteReader();
               List<Logement> listLogement = new List<Logement>();
               while (reader.Read())
               {
@@ -48,9 +52,9 @@ namespace Backend_Projet_BDD.Service
 
         public List<Logement> getLogementByWord(string word)
         {
-            String query = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,isnull((select top 1 (c.commissionBase + CAST(c.pourcentage as FLOAT)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc),0) as 'commission', max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement where l.dateDispo like '%" + word + "%' or l.adresse like '%" + word + "%' or l.type like '%" + word + "%' or l.nbPiece like '%" + word + "%' or l.surface like '%" + word + "%' or l.etat like '%" + word + "%' or l.objetGestion like '%" + word + "%' or l.prix like '%" + word + "%' or l.ville like '%" + word + "%' or p.nom like '%" + word + "%' group by l.id_Logement,l.adresse,l.type,l.nbPiece,l.surface,l.etat,l.objetGestion,l.prix,l.dateDispo,l.ville,l.id_Proprietaire, p.nom;";
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataReader reader = cmd.ExecuteReader();
+            String query = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,ifnull((select (c.commissionBase + CAST(c.pourcentage as DECIMAL)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc LIMIT 1),0) as 'commission', max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement where l.dateDispo like '%" + word + "%' or l.adresse like '%" + word + "%' or l.type like '%" + word + "%' or l.nbPiece like '%" + word + "%' or l.surface like '%" + word + "%' or l.etat like '%" + word + "%' or l.objetGestion like '%" + word + "%' or l.prix like '%" + word + "%' or l.ville like '%" + word + "%' or p.nom like '%" + word + "%' group by l.id_Logement,l.adresse,l.type,l.nbPiece,l.surface,l.etat,l.objetGestion,l.prix,l.dateDispo,l.ville,l.id_Proprietaire, p.nom;";
+            MySqlCommand cmd = new MySqlCommand(query, _con);
+            MySqlDataReader reader = cmd.ExecuteReader();
             List<Logement> listLogement = new List<Logement>();
             while (reader.Read())
             {
@@ -88,10 +92,10 @@ namespace Backend_Projet_BDD.Service
             String where = "where " + whereType + wherenbPieces + whereSurface + whereEtat + whereObjet + whereVille + wherePrixMin + wherePrixMax;
             String whereTotal = where.Length == 6 ? " and " : where;
             String groupBy = " group by l.id_Logement,l.adresse,l.type,l.nbPiece,l.surface,l.etat,l.objetGestion,l.prix,l.dateDispo,l.ville,l.id_Proprietaire, p.nom ";
-            String querytmp = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,isnull((select top 1 (c.commissionBase + CAST(c.pourcentage as FLOAT)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc),0) as 'commission', max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement " + whereTotal;
+            String querytmp = "Select l.*, p.nom as 'nomProprio', count(g.id_Garage) as nbGarages,ifnull((select (c.commissionBase + CAST(c.pourcentage as DECIMAL)/100 * l.prix) as commission from Commission c where c.id_Logement = l.id_Logement order by c.date_Commission desc LIMIT 1),0) as 'commission', max(v.date_Visite) as lastVisite from Logement l inner join Personne p on p.id_Personne= l.id_Proprietaire inner join Garage g on l.id_Logement = g.id_Logement LEFT join Commission c on c.id_Logement = l.id_Logement LEFT join Visite v on v.id_Logement = l.id_Logement " + whereTotal;
             String query = querytmp.Substring(0, querytmp.Length - 5) + groupBy + havingNbGarages;
-            SqlCommand cmd = new SqlCommand(query, _con);
-            SqlDataReader reader = cmd.ExecuteReader();
+            MySqlCommand cmd = new MySqlCommand(query, _con);
+            MySqlDataReader reader = cmd.ExecuteReader();
             List<Logement> listLogement = new List<Logement>();
             while (reader.Read())
             {
